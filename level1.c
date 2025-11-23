@@ -29,6 +29,7 @@ void Clear();
 void User_menu();
 void Admin_menu();
 void Loginf();
+void Admin_check();
 
 int main()
 {
@@ -97,7 +98,7 @@ void Check()
     {
         for(c = 0; c < 4; c++)
         {
-            if(User_name != "Admin")
+            if(strcmp(User_name, "Admin") != 0)
             {
             if(seat_1[r][c] == User_name[0])
             {
@@ -122,7 +123,17 @@ void Check()
 int Reserve()
 {
     int r,c;
-
+    char User_name_copy[10];
+    if(strcmp(User_name, "Admin") != 0)
+    {
+        strcpy(User_name_copy,User_name);
+    }
+    else
+    {
+        printf("Please input anyone you want to help reserve:\n");
+        scanf("%s",User_name_copy);
+        while(getchar() != '\n'); 
+    }
     printf("Please type your reservation as the example\n'Reserve Monday Floor 1 Seat 1 2'\n");
     while(getchar() != '\n'); 
     scanf("Reserve %s Floor %d Seat %d %d",Date,&Floor,&r,&c);
@@ -133,7 +144,7 @@ int Reserve()
         return 1;
     }
 
-    seat[d][Floor - 1][r - 1][c - 1] = User_name[0];
+    seat[d][Floor - 1][r - 1][c - 1] = User_name_copy[0];
     count++;
     return 0;
 }
@@ -164,6 +175,32 @@ void checkmyself()
         }
 }
 
+//管理员查看函数
+void Admin_check()
+{
+    for(int d = 0; d < 7; d++)
+        {
+            for(int f = 0; f < 5; f++)
+            {
+                for(int r = 0; r < 4; r++)
+                {
+                    for(int c = 0; c < 4; c++)
+                    {
+                        if(seat[d][f][r][c] != '0')
+                        {
+                            printf("%s Floor %d Seat %d %d\n",Date_Translate(d,Date_English), f + 1, r + 1, c + 1);
+                            flag0  = 1;
+                        }
+                    }
+                }
+            }
+        }
+
+        if(flag0 == 0)
+        {
+            printf("None.\n");
+        }
+}
 
 //日期映射函数 1（将字符串映射成数字，方便检索）
 int convert(char Date [12],char* Date_English[7])
@@ -246,7 +283,7 @@ void Admin_menu()
     printf("已进入管理员模式\n");
     while(1)
     {
-    printf("Please select a command from the menu\n1. Check for available seats\n2. Reserve seat\n3. Check your reservation\n4. Exit logining\n5. Quit\n6. Clear all data\n");
+    printf("Please select a command from the menu\n1. Check for available seats\n2. Help anyone reserve seat\n3. Check all reservation\n4. Exit logining\n5. Quit\n6. Clear all data\n");
     while(getchar() != '\n'); 
     scanf("%d",&menu_select);
     
@@ -256,7 +293,7 @@ void Admin_menu()
         Check();
         break;
 
-        case 2://Reserve seat
+        case 2://Help anyone reserve seat
         while(1)
         {
            int flag = Reserve();
@@ -271,8 +308,8 @@ void Admin_menu()
         }
         break;
 
-        case 3://Check your reservation
-        checkmyself();
+        case 3://Check all reservation
+        Admin_check();
         break;
 
         case 4:
